@@ -21,6 +21,9 @@ jobs:
         with:
           dotnet-version: '7.0'
 
+      - name: Clean project
+        run: dotnet clean --configuration Release
+
       - name: Restore NuGet packages
         run: dotnet restore
 
