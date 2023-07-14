@@ -21,7 +21,7 @@ jobs:
         run: nuget restore 
 
       - name: Build Android
-        run: MSBuild /p:Configuration=Debug ./StyleCop.Droid/StyleCop.Droid.csproj
+        run: MSBuild /p:Configuration=Debug ./StyleCop/StyleCop.Droid/StyleCop.Droid.csproj
         #run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
 
       - name: Build iOS
