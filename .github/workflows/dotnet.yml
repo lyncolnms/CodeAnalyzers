@@ -18,10 +18,12 @@ jobs:
           dotnet-version: '7.0'
 
       - name: Install Xamarin.iOS SDK
-        run: sudo $RUNNER_TOOL_CACHE/Xamarin.iOS/14.20.0.24/xamarin.ios-14.20.0.24.pkg
+        run: |
+          sudo installer -pkg /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/Specifications/Xcode.SDK.iPhoneOS14.5.sdk/System/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/SDKs/Xamarin.iOS.sdk.pkg -target /
 
       - name: Install Xamarin.Android SDK
-        run: sudo $RUNNER_TOOL_CACHE/Xamarin.Android/11.4.0.2/xamarin.android-11.4.0.2.pkg
+        run: |
+          sudo installer -pkg /Applications/Xamarin.Android.sdk/Contents/Resources/Xamarin.Android.sdk.pkg -target /
 
       - name: Run StyleCop.Analyzers
         run: dotnet build --configuration Release --no-restore --nologo
