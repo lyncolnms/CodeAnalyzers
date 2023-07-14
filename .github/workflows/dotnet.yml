@@ -29,7 +29,7 @@ jobs:
               ls
         
       - name: Build
-        run: msbuild StyleCop/StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
+        run: msbuild StyleCop/StyleCop/StyleCop.csproj /p:Configuration=Debug
         
       - name: Build
         run: msbuild StyleCop/StyleCop/StyleCop.csproj /p:Configuration=Debug /p:Platform=iPhoneSimulator /t:Rebuild
