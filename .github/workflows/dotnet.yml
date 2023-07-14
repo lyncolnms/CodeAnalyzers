@@ -9,15 +9,16 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
       - name: Setup .NET Core SDK 6
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
         
       - name: Install dependencies
-        run: |
-              cd CodeAnalyzers
-              nuget restore 
+        run: nuget restore 
 
       - name: Build Android
         run: MSBuild /p:Configuration=Debug ./StyleCop.Android/StyleCop.Android.csproj
