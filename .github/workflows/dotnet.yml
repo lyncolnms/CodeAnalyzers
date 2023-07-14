@@ -2,30 +2,26 @@ name: Code Review
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
+
 jobs:
   code-review:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Remove obj and bin folders
-        run: |
-          rm -rf **/obj
-          rm -rf **/bin
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '7.0'
 
-      - name: Clean project
-        run: dotnet clean --configuration Release
+      - name: Install Xamarin.iOS SDK
+        run: sudo $RUNNER_TOOL_CACHE/Xamarin.iOS/14.20.0.24/xamarin.ios-14.20.0.24.pkg
 
-      - name: Restore NuGet packages
-        run: dotnet restore
+      - name: Install Xamarin.Android SDK
+        run: sudo $RUNNER_TOOL_CACHE/Xamarin.Android/11.4.0.2/xamarin.android-11.4.0.2.pkg
 
       - name: Run StyleCop.Analyzers
         run: dotnet build --configuration Release --no-restore --nologo
