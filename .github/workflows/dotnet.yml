@@ -17,7 +17,7 @@ jobs:
           dotnet-version: '7.0'
 
       - name: Install StyleCop.Analyzers
-        run: dotnet tool install StyleCop.Analyzers --global --version <versão-desejada>
+        run: dotnet tool install StyleCop.Analyzers --global
 
       - name: Run StyleCop.Analyzers
         run: dotnet build --configuration Release --no-restore --nologo
