@@ -25,7 +25,7 @@ jobs:
         #run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
 
       - name: Build iOS
-        run: MSBuild /t:Build /p:Configuration=Debug /p:Platform=iPhone /p:BuildIpa=true .StyleCop/StyleCop.iOS/StyleCop.iOS.csproj
+        run: MSBuild /t:Build /p:Configuration=Debug /p:Platform=iPhone /p:BuildIpa=true ./StyleCop/StyleCop.iOS/StyleCop.iOS.csproj
 
       - name: Run StyleCop.Analyzers
         run: dotnet build --configuration Release --no-restore --nologo
