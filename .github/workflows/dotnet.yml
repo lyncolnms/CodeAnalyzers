@@ -9,21 +9,34 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Set default Xamarin iOS SDK
+        run: | 
+              $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.12 --ios=14.10 
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+      - name: Set default Xamarin Android SDK
+        run: | 
+              $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.10 --android=10.2
+
+      - name: Set default Xcode 12.3
+        run: |
+          XCODE_ROOT=/Applications/Xcode_12.3.0.app
+          echo "MD_APPLE_SDK_ROOT=$XCODE_ROOT" >> $GITHUB_ENV
+          sudo xcode-select -s $XCODE_ROOT
+
+      - name: Setup .NET Core SDK 6
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0'
+          dotnet-version: 6.0.x
 
-      - name: Install Xamarin.iOS SDK
-        run: |
-          sudo installer -pkg /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Xcode/Specifications/Xcode.SDK.iPhoneOS14.5.sdk/System/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/SDKs/Xamarin.iOS.sdk.pkg -target /
+      - name: Install dependencies
+        run: nuget restore
 
-      - name: Install Xamarin.Android SDK
-        run: |
-          sudo installer -pkg /Applications/Xamarin.Android.sdk/Contents/Resources/Xamarin.Android.sdk.pkg -target /
+      - name: Build
+        run: msbuild StyleCop/StyleCop.csproj /p:Configuration=Debug /p:Platform=iPhoneSimulator /t:Rebuild
+
+      - name: Build
+        run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
 
       - name: Run StyleCop.Analyzers
         run: dotnet build --configuration Release --no-restore --nologo
