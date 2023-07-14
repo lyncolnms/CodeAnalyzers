@@ -9,17 +9,6 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set default Xamarin iOS SDK
-        run: |
-              $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.12 --ios=14.8 --android=10.2
-
-      - name: Set default Xcode 12.3
-        run: |
-          XCODE_ROOT=/Applications/Xcode_12.3.0.app
-          echo "MD_APPLE_SDK_ROOT=$XCODE_ROOT" >> $GITHUB_ENV
-          sudo xcode-select -s $XCODE_ROOT
-
       - name: Setup .NET Core SDK 6
         uses: actions/setup-dotnet@v3
         with:
@@ -28,11 +17,12 @@ jobs:
       - name: Install dependencies
         run: nuget restore
 
-      - name: Build
-        run: msbuild StyleCop/StyleCop.csproj /p:Configuration=Debug /p:Platform=iPhoneSimulator /t:Rebuild
+      - name: Build Android
+        run: MSBuild /p:Configuration=Debug ./StyleCop.Android/StyleCop.Android.csproj
+        #run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
 
       - name: Build
-        run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
+        run: MSBuild /t:Build /p:Configuration=Debug /p:Platform=iPhone /p:BuildIpa=true ./StyleCop.iOS/StyleCop.iOS.csproj
 
       - name: Run StyleCop.Analyzers
         run: dotnet build --configuration Release --no-restore --nologo
