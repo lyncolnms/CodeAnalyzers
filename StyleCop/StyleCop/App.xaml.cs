@@ -13,6 +13,9 @@ namespace StyleCop
             InitializeComponent();
 
             MainPage = new MainPage();
+
+            var test = "test";
+            Console.WriteLine(test);
         }
 
         protected override void OnStart()
