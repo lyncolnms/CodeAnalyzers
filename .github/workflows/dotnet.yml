@@ -23,7 +23,9 @@ jobs:
           ls
         
       - name: Install dependencies
-        run: nuget restore StyleCop.sln
+        run: |
+              cd CodeAnalyzers
+              nuget restore 
 
       - name: Build Android
         run: MSBuild /p:Configuration=Debug ./StyleCop.Android/StyleCop.Android.csproj
