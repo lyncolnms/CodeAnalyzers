@@ -20,6 +20,14 @@ jobs:
       - name: Install dependencies
         run: nuget restore 
         
+      - name: Show what's in the directory
+        run: |
+              ls
+      - name: Show what all is in the parent directory
+        run: |
+              cd ..
+              ls
+        
       - name: Build
         run: msbuild StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
         
