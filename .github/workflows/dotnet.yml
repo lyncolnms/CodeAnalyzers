@@ -15,7 +15,7 @@ jobs:
           dotnet-version: 6.0.x
 
       - name: Install dependencies
-        run: nuget restore StyleCop.sln
+        run: ls && nuget restore StyleCop.sln
 
       - name: Build Android
         run: MSBuild /p:Configuration=Debug ./StyleCop.Android/StyleCop.Android.csproj
