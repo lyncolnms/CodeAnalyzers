@@ -13,19 +13,9 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
-
-      - name: Show what's in the directory
-        run: |
-          ls
-      - name: Show what all is in the parent directory
-        run: |
-          cd ..
-          ls
         
       - name: Install dependencies
         run: |
-              ls
-              cd ..
               cd CodeAnalyzers
               nuget restore 
 
