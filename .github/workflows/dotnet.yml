@@ -21,10 +21,10 @@ jobs:
         run: nuget restore 
         
       - name: Build
-        run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
+        run: msbuild ./StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
         
       - name: Build
-        run: msbuild StyleCop/StyleCop.csproj /p:Configuration=Debug /p:Platform=iPhoneSimulator /t:Rebuild
+        run: msbuild ./StyleCop/StyleCop.csproj /p:Configuration=Debug /p:Platform=iPhoneSimulator /t:Rebuild
 
       #- name: Build Android
         #run: MSBuild /p:Configuration=Debug ./StyleCop/StyleCop.Droid/StyleCop.Droid.csproj
