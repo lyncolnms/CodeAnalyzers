@@ -26,31 +26,41 @@ jobs:
         run: dotnet tool update --global dotnet-format
 
       - name: Diagnose Formatting
-        run: dotnet format analyzers --verify-no-changes --verbosity diagnostic
+        run: dotnet format analyzers --verify-no-changes --verbosity diagnostic > analysis.txt
 
-      - name: Get error lines
-        id: error-lines
-        run: |
-          error_lines=$(dotnet format analyzers --verify-no-changes --verbosity diagnostic 2>&1)
-          echo "::set-output name=lines::$error_lines"
-
-      - name: Add PR comments
-        uses: actions/github-script@v5
+      - name: Reviewdog Step
+        uses: reviewdog/action-setup@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { createOrUpdateComment } = require('pull-request-comment');
-            const lines = ${{ steps.error-lines.outputs.lines }};
-            
-            for (const line of lines.split('\n')) {
-              const match = line.match(/^(.*):(\d+):\s*(warning|error):\s*(.*)$/);
-              if (match) {
-                const [, file, lineNo, , message] = match;
-                const comment = `**${message}**\n\nFile: ${file}\nLine: ${lineNo}`;
-            
-                await createOrUpdateComment(comment, file, Number(lineNo));
-              }
-            }
+          reviewdog_version: latest
+
+      - name: Run Reviewdog
+        run: |
+              reviewdog -f=dotnetformat -name="dotnetformat" -reporter=github-pr-review < analysis.txt
+        # Exemplo: dotnet build / eslint / pyflakes > analysis.txt
+
+        #      - name: Get error lines
+#        id: error-lines
+#        run: |
+#          error_lines=$(dotnet format analyzers --verify-no-changes --verbosity diagnostic 2>&1)
+#          echo "::set-output name=lines::$error_lines"
+#
+#      - name: Add PR comments
+#        uses: actions/github-script@v5
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          script: |
+#            const { createOrUpdateComment } = require('pull-request-comment');
+#            const lines = ${{ steps.error-lines.outputs.lines }};
+#
+#            for (const line of lines.split('\n')) {
+#              const match = line.match(/^(.*):(\d+):\s*(warning|error):\s*(.*)$/);
+#              if (match) {
+#                const [, file, lineNo, , message] = match;
+#                const comment = `**${message}**\n\nFile: ${file}\nLine: ${lineNo}`;
+#
+#                await createOrUpdateComment(comment, file, Number(lineNo));
+#              }
+#            }
 
 
         #name: Code Review
