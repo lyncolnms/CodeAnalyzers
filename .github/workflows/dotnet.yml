@@ -41,19 +41,20 @@ jobs:
           script: |
             const lines = "${{ steps.error-lines.outputs.lines }}".split("\n");
             lines.forEach((line) => {
-              if (line.startsWith("StyleCop/StyleCop")) {
-                const [_, file, lineNo, _, message] = line.match(/^(.*):(\d+):\s*(warning|error):\s*(.*)$/);
+              if (line.startsWith("src/")) {
+                const [discard_one, file, lineNo, discard_two, message] = line.match(/^(.*):(\d+):\s*(warning|error):\s*(.*)$/);
                 github.rest.pulls.createReviewComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   pull_number: context.issue.number,
                   body: `**${message}**`,
                   commit_id: context.payload.pull_request.head.sha,
-                  path: file.replace("StyleCop/StyleCop", ""),
+                  path: file,
                   position: Number(lineNo)
                 });
               }
             });
+
 
         #name: Code Review
 
