@@ -23,7 +23,7 @@ jobs:
         run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal
 
       - name: Generate StyleCop report
-        run: dotnet build --no-restore --no-dependencies --verbosity normal /p:ReportAnalyzer=true /p:Analyze=true /p:IncludeDiagnosticSummary=true /p:StyleCopReportOutputPath=stylecop-report.xml
+        run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal /p:ReportAnalyzer=true /p:Analyze=true /p:IncludeDiagnosticSummary=true /p:StyleCopReportOutputPath=stylecop-report.xml
 
       - name: Install Reviewdog
         run: |
