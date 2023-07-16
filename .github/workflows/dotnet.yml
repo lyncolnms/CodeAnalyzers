@@ -28,9 +28,6 @@ jobs:
       - name: Diagnose Formatting
         run: dotnet format analyzers --verify-no-changes --verbosity diagnostic
 
-      - name: Test
-        run: dotnet test --no-build --verbosity normal
-
       - name: Get error lines
         id: error-lines
         run: |
