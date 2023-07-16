@@ -31,29 +31,26 @@ jobs:
       - name: Get error lines
         id: error-lines
         run: |
-          error_lines=$(dotnet build --no-restore --no-dependencies --verbosity normal | awk '/warning|error/ {print $$0}')
+          error_lines=$(dotnet format analyzers --verify-no-changes --verbosity diagnostic 2>&1)
           echo "::set-output name=lines::$error_lines"
 
-      - name: Comment on PR
+      - name: Add PR comments
         uses: actions/github-script@v5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const lines = "${{ steps.error-lines.outputs.lines }}".split("\n");
-            lines.forEach((line) => {
-              if (line.startsWith("src/")) {
-                const [discard_one, file, lineNo, discard_two, message] = line.match(/^(.*):(\d+):\s*(warning|error):\s*(.*)$/);
-                github.rest.pulls.createReviewComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  pull_number: context.issue.number,
-                  body: `**${message}**`,
-                  commit_id: context.payload.pull_request.head.sha,
-                  path: file,
-                  position: Number(lineNo)
-                });
+            const { createOrUpdateComment } = require('pull-request-comment');
+            const lines = ${{ steps.error-lines.outputs.lines }};
+            
+            for (const line of lines.split('\n')) {
+              const match = line.match(/^(.*):(\d+):\s*(warning|error):\s*(.*)$/);
+              if (match) {
+                const [, file, lineNo, , message] = match;
+                const comment = `**${message}**\n\nFile: ${file}\nLine: ${lineNo}`;
+            
+                await createOrUpdateComment(comment, file, Number(lineNo));
               }
-            });
+            }
 
 
         #name: Code Review
