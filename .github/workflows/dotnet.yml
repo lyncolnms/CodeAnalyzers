@@ -1,28 +1,86 @@
-name: Code Review
+name: Code Analysis
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types:
+      - opened
 
 jobs:
-  code-review:
-    runs-on: macos-latest
+  analyze-code:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Setup .NET Core SDK 6
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.0.x
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: ls && nuget restore StyleCop.sln
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
 
-      - name: Build Android
-        run: MSBuild /p:Configuration=Debug ./StyleCop.Android/StyleCop.Android.csproj
-        #run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
-
-      - name: Build
-        run: MSBuild /t:Build /p:Configuration=Debug /p:Platform=iPhone /p:BuildIpa=true ./StyleCop.iOS/StyleCop.iOS.csproj
+      - name: Restore NuGet packages
+        run: dotnet restore
 
       - name: Run StyleCop.Analyzers
-        run: dotnet build --configuration Release --no-restore --nologo
+        run: dotnet build --no-restore --no-dependencies --verbosity normal
+
+      - name: Get error lines
+        id: error-lines
+        run: |
+          error_lines=$(dotnet build --no-restore --no-dependencies --verbosity normal | awk '/warning|error/ {print $$0}')
+          echo "::set-output name=lines::$error_lines"
+
+      - name: Comment on PR
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const lines = "${{ steps.error-lines.outputs.lines }}".split("\n");
+            lines.forEach((line) => {
+              if (line.startsWith("StyleCop/StyleCop")) {
+                const [_, file, lineNo, _, message] = line.match(/^(.*):(\d+):\s*(warning|error):\s*(.*)$/);
+                github.rest.pulls.createReviewComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: context.issue.number,
+                  body: `**${message}**`,
+                  commit_id: context.payload.pull_request.head.sha,
+                  path: file.replace("StyleCop/StyleCop", ""),
+                  position: Number(lineNo)
+                });
+              }
+            });
+
+        #name: Code Review
+
+        #on:
+        #pull_request:
+        ##types: [opened, synchronize]
+
+        #jobs:
+        #code-review:
+        #runs-on: macos-latest
+
+        #steps:
+        #- name: Checkout
+        #uses: actions/checkout@v3
+
+        #- name: Setup .NET Core SDK 7
+        #uses: actions/setup-dotnet@v3
+
+        #- name: Install dependencies
+        #run: nuget restore
+
+        #- name: Build
+        #run: msbuild StyleCop/StyleCop/StyleCop.csproj /p:Configuration=Debug
+
+        #- name: Build
+        #run: msbuild StyleCop/StyleCop/StyleCop.csproj /p:Configuration=Debug /p:Platform=iPhoneSimulator /t:Rebuild
+
+        #- name: Build Android
+        #run: MSBuild /p:Configuration=Debug ./StyleCop/StyleCop.Droid/StyleCop.Droid.csproj
+        #run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
+
+        #- name: Build iOS
+        #run: MSBuild /t:Build /p:Configuration=Debug /p:Platform=iPhone /p:BuildIpa=true ./StyleCop/StyleCop.iOS/StyleCop.iOS.csproj
+
+        #- name: Run StyleCop.Analyzers
+        #run: dotnet build --configuration Release --no-restore --nologo
