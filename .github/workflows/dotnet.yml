@@ -22,20 +22,18 @@ jobs:
       - name: Run StyleCop.Analyzers
         run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal
 
-      - name: Install formatter
-        run: dotnet tool update --global dotnet-format
+      - name: Generate StyleCop report
+        run: dotnet build --no-restore --no-dependencies --verbosity normal /p:ReportAnalyzer=true /p:Analyze=true /p:IncludeDiagnosticSummary=true /p:StyleCopReportOutputPath=stylecop-report.xml
 
-      - name: Diagnose Formatting
-        run: dotnet format analyzers --verify-no-changes --verbosity diagnostic > analysis.txt
-
-      - name: Reviewdog Step
-        uses: reviewdog/action-setup@v1
-        with:
-          reviewdog_version: latest
+      - name: Install Reviewdog
+        run: |
+          wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin
 
       - name: Run Reviewdog
         run: |
-              reviewdog -f=dotnetformat -name="dotnetformat" -reporter=github-pr-review < analysis.txt
+          reviewdog -f=stylecop -name="stylecop" -reporter=github-pr-review -fail-on-error=true < stylecop-report.xml
+        
+
         # Exemplo: dotnet build / eslint / pyflakes > analysis.txt
 
         #      - name: Get error lines
