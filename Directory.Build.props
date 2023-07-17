@@ -1,0 +1,8 @@
+# CodeAnalyzers
+<Project>
+  <PropertyGroup>
+    <StyleCopTreatWarningsAsErrors>true</StyleCopTreatWarningsAsErrors>
+    <StyleCopEnabled>true</StyleCopEnabled>
+    <StyleCopAdditionalRulesDirectory>CustomRules</StyleCopAdditionalRulesDirectory>
+  </PropertyGroup>
+</Project>
