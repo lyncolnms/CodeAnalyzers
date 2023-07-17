@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Reviewdog
         run: |
-          reviewdog -f=stylecop -name="stylecop" -reporter=github-pr-review -fail-on-error=true < stylecop-report.txt
+          reviewdog -f=stylecop -name="stylecop" -reporter=github-pr-review -fail-on-error=true < ${{ github.workspace }}/stylecop-report.txt
         
 
         # Exemplo: dotnet build / eslint / pyflakes > analysis.txt
