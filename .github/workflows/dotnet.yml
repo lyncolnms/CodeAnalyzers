@@ -23,7 +23,7 @@ jobs:
         run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal
 
       - name: Generate StyleCop report
-        run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal /p:ReportAnalyzer=true /p:Analyze=true /p:IncludeDiagnosticSummary=true /p:StyleCopReportOutputPath=stylecop-report.xml
+        run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal /p:ReportStyleCopViolations=true /p:StyleCopReportPath=$(System.DefaultWorkingDirectory)/stylecop-report.xml
 
       - name: Install Reviewdog
         run: |
@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Reviewdog
         run: |
-          reviewdog -f=stylecop -name="stylecop" -reporter=github-pr-review -fail-on-error=true < stylecop-report.xml
+          reviewdog -f=stylecop -name="stylecop" -reporter=github-pr-review -fail-on-error=true < stylecop-report.txt
         
 
         # Exemplo: dotnet build / eslint / pyflakes > analysis.txt
