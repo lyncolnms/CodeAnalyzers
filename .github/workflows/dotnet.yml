@@ -19,11 +19,8 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore
 
-      - name: Run StyleCop.Analyzers
-        run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal
-
       - name: Generate StyleCop report
-        run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal /p:ReportStyleCopViolations=true /p:StyleCopReportPath=$(System.DefaultWorkingDirectory)/stylecop-report.xml
+        run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal /p:ReportStyleCopViolations=true /p:StyleCopReportPath=${{ github.workspace }}/stylecop-report.xml
 
       - name: Install Reviewdog
         run: |
