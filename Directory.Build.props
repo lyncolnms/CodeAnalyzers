@@ -1,4 +1,3 @@
-# CodeAnalyzers
 <Project>
   <PropertyGroup>
     <StyleCopTreatWarningsAsErrors>true</StyleCopTreatWarningsAsErrors>
