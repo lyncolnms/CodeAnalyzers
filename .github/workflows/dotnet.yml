@@ -19,17 +19,18 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore
 
-      - name: Generate StyleCop report
-        run: dotnet build StyleCop/StyleCop/StyleCop.csproj --no-restore --no-dependencies --verbosity normal /p:ReportStyleCopViolations=true /p:StyleCopReportPath=${{ github.workspace }}/stylecop-report.xml
+      - name: Install StyleCop.Analyzers
+        run: dotnet tool install --global StyleCop.Analyzers
 
-      - name: Install Reviewdog
-        run: |
-          wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin
+      - name: Run StyleCop.Analyzers
+        run: dotnet build --no-restore --no-dependencies --verbosity normal /p:TreatWarningsAsErrors=true
 
-      - name: Run Reviewdog
+      - name: Install reviewdog
         run: |
-          reviewdog -f=stylecop -name="stylecop" -reporter=github-pr-review -fail-on-error=true < ${{ github.workspace }}/stylecop-report.txt
-        
+          wget -O - -q https://install.goreleaser.com/github.com/reviewdog/reviewdog.sh | sh -s -- -b /usr/local/bin/
+
+      - name: Run reviewdog
+        run: reviewdog -reporter=github-pr-review -f=roslyn
 
         # Exemplo: dotnet build / eslint / pyflakes > analysis.txt
 
