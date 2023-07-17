@@ -20,7 +20,7 @@ jobs:
         run: dotnet restore
 
       - name: Generate StyleCop report
-        run: dotnet build StyleCop/StyleCop --no-restore --no-dependencies --verbosity normal /p:ReportStyleCopViolations=true /p:StyleCopReportPath=${{ github.workspace }}/stylecop-report.xml
+        run: dotnet build StyleCop/StyleCop/StyleCop.csproj --no-restore --no-dependencies --verbosity normal /p:ReportStyleCopViolations=true /p:StyleCopReportPath=${{ github.workspace }}/stylecop-report.xml
 
       - name: Install Reviewdog
         run: |
