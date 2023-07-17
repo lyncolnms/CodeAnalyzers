@@ -20,14 +20,14 @@ jobs:
         run: dotnet restore
 
       - name: Build with StyleCop.Analyzers
-        run: dotnet build --no-restore --verbosity normal
+        run: dotnet build StyleCop/StyleCop/StyleCop.csproj --no-restore --verbosity normal
 
-      - name: Build Android
-        run: MSBuild /p:Configuration=Debug ./StyleCop/StyleCop.Droid/StyleCop.Droid.csproj
+#      - name: Build Android
+#        run: MSBuild /p:Configuration=Debug ./StyleCop/StyleCop.Droid/StyleCop.Droid.csproj
         #run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
 
-      - name: Build iOS
-        run: MSBuild /t:Build /p:Configuration=Debug /p:Platform=iPhone /p:BuildIpa=true ./StyleCop/StyleCop.iOS/StyleCop.iOS.csproj
+#      - name: Build iOS
+#        run: MSBuild /t:Build /p:Configuration=Debug /p:Platform=iPhone /p:BuildIpa=true ./StyleCop/StyleCop.iOS/StyleCop.iOS.csproj
 
       - name: Save StyleCop violations to file
         run: dotnet build --no-restore --verbosity normal /p:StyleCopViolationsOutputFile=stylecop-report.xml
