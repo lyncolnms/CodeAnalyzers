@@ -1,4 +1,4 @@
-name: Code Analysis
+name: StyleCop Analysis
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - opened
 
 jobs:
-  analyze-code:
+  stylecop:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,18 +19,21 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore
 
-      - name: Install StyleCop.Analyzers
-        run: dotnet tool install --global StyleCop.Analyzers
+      - name: Build with StyleCop.Analyzers
+        run: dotnet build --no-restore --verbosity normal
 
-      - name: Run StyleCop.Analyzers
-        run: dotnet build --no-restore --no-dependencies --verbosity normal /p:TreatWarningsAsErrors=true
+      - name: Save StyleCop violations to file
+        run: dotnet build --no-restore --verbosity normal /p:StyleCopViolationsOutputFile=stylecop-report.xml
 
-      - name: Install reviewdog
+      - name: Install Reviewdog
         run: |
-          wget -O - -q https://install.goreleaser.com/github.com/reviewdog/reviewdog.sh | sh -s -- -b /usr/local/bin/
+          mkdir -p $HOME/bin
+          curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b $HOME/bin
 
-      - name: Run reviewdog
-        run: reviewdog -reporter=github-pr-review -f=roslyn
+      - name: Run Reviewdog
+        run: |
+          reviewdog -f=stylecop -name="StyleCop" -reporter=github-pr-check -level=warning -diff="git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }}" -tee < stylecop-report.xml
+
 
         # Exemplo: dotnet build / eslint / pyflakes > analysis.txt
 
