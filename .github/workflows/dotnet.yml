@@ -1,47 +1,43 @@
-name: StyleCop Analysis
+name: Static Code Analysis
 
 on:
   pull_request:
-    types:
-      - opened
+    types: [opened, synchronize]
 
 jobs:
-  stylecop:
+  analyze_code:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up .NET Core
+      - name: Setup .NET
         uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
 
-      - name: Restore NuGet packages
-        run: dotnet restore
-
-      - name: Build with StyleCop.Analyzers
-        run: dotnet build StyleCop/StyleCop/StyleCop.csproj --no-restore --verbosity normal
-
-#      - name: Build Android
-#        run: MSBuild /p:Configuration=Debug ./StyleCop/StyleCop.Droid/StyleCop.Droid.csproj
-        #run: msbuild StyleCop/StyleCop.csproj /t:PackageForAndroid /p:Configuration=Debug
-
-#      - name: Build iOS
-#        run: MSBuild /t:Build /p:Configuration=Debug /p:Platform=iPhone /p:BuildIpa=true ./StyleCop/StyleCop.iOS/StyleCop.iOS.csproj
-
-      - name: Save StyleCop violations to file
-        run: dotnet build --no-restore --verbosity normal /p:StyleCopViolationsOutputFile=stylecop-report.xml
+      - name: Build and analyze
+        run: |
+          dotnet build StyleCop.sln --no-restore --configuration Release
 
       - name: Install Reviewdog
         run: |
-          mkdir -p $HOME/bin
-          curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b $HOME/bin
+          wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin
 
-      - name: Run Reviewdog
+      - name: Execute custom code analysis
         run: |
-          reviewdog -f=stylecop -name="StyleCop" -reporter=github-pr-check -level=warning -diff="git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }}" -tee < stylecop-report.xml
+          dotnet build StyleCop/StyleCop/StyleCop.csproj --no-restore --configuration Release
+          dotnet run --no-build --project CustomRules/Rules.cs -- --output results.xml
 
+      - name: Run Reviewdog for custom analysis
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          reviewdog -reporter=github-pr-check -level=error < results.xml
 
+        #dotnet tool install --global dotnet-format # Instalação da ferramenta de formatação (opcional)
+        #dotnet format --check YourSolution.sln --verbosity diagnostic # Verifica a formatação do código (opcional)
         # Exemplo: dotnet build / eslint / pyflakes > analysis.txt
 
         #      - name: Get error lines
