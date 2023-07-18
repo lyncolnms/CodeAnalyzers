@@ -54,12 +54,12 @@ jobs:
       runs-on: windows-latest
       steps:
         - name: Run NuGet restore
-          run: dotnet restore ./StyleCop/StyleCop.sln
+          run: dotnet restore StyleCop/StyleCop.sln
 
         - name: Run .NET Code Analysis
           uses: dotnet/code-analysis@main
           id: code-analysis
           with:
-            solution: ./StyleCop/StyleCop.sln
+            solution: StyleCop/StyleCop.sln
             build-breaking: false
             all-categories: all
