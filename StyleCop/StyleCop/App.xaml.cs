@@ -17,10 +17,10 @@ namespace StyleCop
             var test = "test";
             Console.WriteLine(test);
 
-            var g1 = new Guid();    // Noncompliant - what's the intent?
-            Guid g2 = new Guid();        // Noncompliant
-            var g3 = default(Guid); // Noncompliant
-            Guid g4 = default;      // Noncompliant
+            var g1 = new Guid();
+            Guid g2 = new();
+            var g3 = default(Guid);
+            Guid g4 = default;
         }
 
         protected override void OnStart()
