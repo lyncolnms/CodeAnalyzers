@@ -17,6 +17,9 @@ jobs:
         with:
           dotnet-version: '6.0.x'
 
+      - name: Restore dependencies
+        run: dotnet restore
+
       - name: Build and analyze
         run: |
           dotnet build StyleCop.sln --no-restore --configuration Release
