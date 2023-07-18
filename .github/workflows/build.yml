@@ -69,3 +69,15 @@ jobs:
 
           cat data.json
           echo 'REVIEW_ID='$(jq -r '.data.addPullRequestReview.pullRequestReview.id' data.json) >> $GITHUB_ENV
+
+      - name: Submit change request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ env.REVIEW_ID != '' && env.REVIEW_ID != 'null' && contains(github.event.pull_request.body, 'Updates sdk.version') }}
+        run: |
+          gh api graphql -f query='
+            mutation($review: ID!) {
+              submitPullRequestReview(input: {pullRequestReviewId: $review, event: REQUEST_CHANGES, body: "This PR changes the .NET SDK version. Review required from @dotnet/roslyn-infrastructure-current-swat before merging."}) {
+                clientMutationId
+              }
+            }' -f review=$REVIEW_ID
