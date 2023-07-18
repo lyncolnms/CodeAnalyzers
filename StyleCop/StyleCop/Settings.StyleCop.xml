@@ -16,6 +16,14 @@
     <Analyzers>
         <Analyzer AnalyzerId="StyleCop.CSharp.DocumentationRules">
             <Rules>
+                <Rule Name="UseExplicitType" CheckId="SA1131">
+                    <Context>UseExplicitType</Context>
+                    <Description>For example, instead of 'var x = 10;', write 'int x = 10;'.</Description>
+                    <RuleAction>Warning</RuleAction>
+                    <Parameters>
+                        <Parameter Name="Enabled">True</Parameter>
+                    </Parameters>
+                </Rule>
                 <Rule Name="DocumentationTextMustBeginWithACapitalLetter">
                     <RuleSettings>
                         <BooleanProperty Name="Enabled">True</BooleanProperty>
