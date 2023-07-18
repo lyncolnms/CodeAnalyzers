@@ -14,7 +14,7 @@ jobs:
         uses: tomasbjerre/violation-comments-action@master
         with:
           parser: STYLECOP
-          regexp: '.*spotbugs/main\.xml$'
+          regexp: '.*Settings\.StyleCop\.xml'
           # Optional config below
           keepOldComments: true # remove the old comments, or keep them
           commentTemplate: '{{violation.message}}' # see https://github.com/tomasbjerre/violation-comments-lib

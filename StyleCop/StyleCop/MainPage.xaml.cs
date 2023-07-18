@@ -12,6 +12,9 @@ namespace StyleCop
         public MainPage()
         {
             InitializeComponent();
+
+            var test = "ssss";
+            Console.WriteLine(test);
         }
     }
 }
