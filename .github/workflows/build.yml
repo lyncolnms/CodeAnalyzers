@@ -6,43 +6,76 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
-  build:
-    name: Build and analyze
+  static-code-analysis:
+    if: ${{ github.event_name == 'pull_request' || github.head_ref != github.base_ref }} # if it is a PR build
     runs-on: windows-latest
     steps:
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
+      - name: Violation Comments Action
+        uses: tomasbjerre/violation-comments-action@master
         with:
-          java-version: 11
-          distribution: 'zulu' # Alternative distribution options are available.
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache SonarCloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v3
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-      - name: Install SonarCloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
-        run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"lyncolnms_CodeAnalyzers" /o:"lyncolnms" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build --configuration Release
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          parser: STYLECOP
+          regexp: '.*spotbugs/main\.xml$'
+          # Optional config below
+          keepOldComments: true # remove the old comments, or keep them
+          commentTemplate: '{{violation.message}}' # see https://github.com/tomasbjerre/violation-comments-lib
+          maxNumberOfViolations: 99 # Will only post this many comments
+          severity: INFO # INFO, WARN or ERROR
+          commentOnlyChangedContent: true # Comment only if violations in the changed part of PR
+          commentOnlyChangedFiles: true # Comment only on the files that are changed in PR
+          createSingleFileComments: true # Comment several comments, for each violation
+          createCommentWithAllSingleFileComments: false # Create on big comment with all violations
+
+#  build:
+#    name: Build and analyze
+#    runs-on: windows-latest
+#    steps:
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: 11
+#          distribution: 'zulu' # Alternative distribution options are available.
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+#      - name: Cache SonarCloud packages
+#        uses: actions/cache@v3
+#        with:
+#          path: ~\sonar\cache
+#          key: ${{ runner.os }}-sonar
+#          restore-keys: ${{ runner.os }}-sonar
+#      - name: Cache SonarCloud scanner
+#        id: cache-sonar-scanner
+#        uses: actions/cache@v3
+#        with:
+#          path: .\.sonar\scanner
+#          key: ${{ runner.os }}-sonar-scanner
+#          restore-keys: ${{ runner.os }}-sonar-scanner
+#      - name: Install SonarCloud scanner
+#        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+#        shell: powershell
+#        run: |
+#          New-Item -Path .\.sonar\scanner -ItemType Directory
+#          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+#      - name: Build and analyze
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        shell: powershell
+#        run: |
+#          .\.sonar\scanner\dotnet-sonarscanner begin /k:"lyncolnms_CodeAnalyzers" /o:"lyncolnms" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+#          dotnet build --configuration Release
+#          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+#
+#  auto_review:
+#      runs-on: windows-latest
+#      steps:
+#        - name: Run NuGet restore
+#          run: dotnet restore StyleCop/StyleCop.sln
+#
+#        - name: Run .NET Code Analysis
+#          uses: dotnet/code-analysis@main
+#          id: code-analysis
+#          with:
+#            solution: StyleCop/StyleCop.sln
+#            build-breaking: false
+#            all-categories: all
