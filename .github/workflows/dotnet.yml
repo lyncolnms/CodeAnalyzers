@@ -5,39 +5,48 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  analyze_code:
-    runs-on: ubuntu-latest
+    build:
+      name: Setup Xamarin and Mono versions
+      runs-on: macos-latest
+      steps:
+        - name: setup-xamarin
+          uses: maxim-lobanov/setup-xamarin@v1.1
+          with:
+            mono-version: 6.6
+            xamarin-ios-version: 13
+            xamarin-mac-version: latest
+            xamarin-android-version: 10.1.3.7
+            xcode-version: 11.5
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '6.0.x'
+#      - name: Setup .NET
+#        uses: actions/setup-dotnet@v1
+#        with:
+#          dotnet-version: '6.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore
+#      - name: Restore dependencies
+#        run: dotnet restore
 
-      - name: Build and analyze
-        run: |
-          dotnet build StyleCop.sln --no-restore --configuration Release
+#      - name: Build and analyze
+#        run: |
+#          dotnet build StyleCop.sln --no-restore --configuration Release
 
-      - name: Install Reviewdog
-        run: |
-          wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin
+        - name: Install Reviewdog
+          run: |
+            wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin
 
-      - name: Execute custom code analysis
-        run: |
-          dotnet build StyleCop/StyleCop/StyleCop.csproj --no-restore --configuration Release
-          dotnet run --no-build --project CustomRules/Rules.cs -- --output results.xml
+        - name: Execute custom code analysis
+          run: |
+            dotnet build StyleCop/StyleCop/StyleCop.csproj --no-restore --configuration Release
+            dotnet run --no-build --project CustomRules/Rules.cs -- --output results.xml
 
-      - name: Run Reviewdog for custom analysis
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          reviewdog -reporter=github-pr-check -level=error < results.xml
+        - name: Run Reviewdog for custom analysis
+          env:
+            REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            reviewdog -reporter=github-pr-check -level=error < results.xml
 
         #dotnet tool install --global dotnet-format # Instalação da ferramenta de formatação (opcional)
         #dotnet format --check YourSolution.sln --verbosity diagnostic # Verifica a formatação do código (opcional)
