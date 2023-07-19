@@ -11,6 +11,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run dotnet format
         id: format
@@ -31,6 +32,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           title: '[housekeeping] Automated PR to fix formatting errors'
           body: |
             Automated PR to fix formatting errors
