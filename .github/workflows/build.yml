@@ -18,6 +18,7 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           only-changed-files: false
+          fail-fast: false
 
       - name: List items in folder
         run: |
