@@ -34,7 +34,7 @@ jobs:
           import requests
           
           pull_request_number = os.getenv("GITHUB_REF").split("/")[-1]
-          data = """${{ steps.get_report.outputs.report_data }}"""
+          data = """$(cat format-report.json)"""
           data = json.loads(data)
           for issue in data:
           body = issue["message"]
