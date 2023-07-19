@@ -28,16 +28,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cat format-report.json 
-          | 
-          jq -c '.[]' | sed 's/\\r$//' 
-          | 
-          while IFS= read -r line; do
+          cat format-report.json | jq -c '.[]' | sed 's/\\r$//' | 
+          while IFS= read -r line; 
+          do
             body=$(echo "$line" | jq -r '.message')
             path=$(echo "$line" | jq -r '.path')
             position=$(echo "$line" | jq -r '.position')
           
-          gh pr review ${{ github.event.pull_request.number }} --comment "$body" --path "$path" --position "$position"
+            gh pr review ${{ github.event.pull_request.number }} --comment "$body" --path "$path" --position "$position"
           done
 
 #      - name: Commit files
