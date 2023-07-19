@@ -14,7 +14,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run dotnet format
         id: format
@@ -23,28 +22,41 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           action: "fix"
           only-changed-files: false
+          workspace: StyleCop.sln
 
-      - name: Commit files
-        if: steps.format.outputs.has-changes == 'true'
+      - name: Add comments to pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -a -m 'Automated dotnet-format update
-          Co-authored-by: ${{ github.event.pull_request.user.login }} <${{ github.event.pull_request.user.id }}+${{ github.event.pull_request.user.login }}@users.noreply.github.com>'
+          cat format-report.json | jq -c '.[]' | while read -r line; do
+            body=$(echo "$line" | jq -r '.message')
+            path=$(echo "$line" | jq -r '.path')
+            position=$(echo "$line" | jq -r '.position')
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: '[housekeeping] Automated PR to fix formatting errors'
-          body: |
-            Automated PR to fix formatting errors
-          committer: GitHub <noreply@github.com>
-          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          labels: housekeeping
-          assignees: lyncolnms
-          reviewers: lyncolnms
-          branch: housekeeping/code-format
+            gh pr review ${{ github.event.pull_request.number }} --comment "$body" --path "$path" --position "$position"
+          done
+
+#      - name: Commit files
+#        if: steps.format.outputs.has-changes == 'true'
+#        run: |
+#          git config --local user.name "github-actions[bot]"
+#          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+#          git commit -a -m 'Automated dotnet-format update
+#          Co-authored-by: ${{ github.event.pull_request.user.login }} <${{ github.event.pull_request.user.id }}+${{ github.event.pull_request.user.login }}@users.noreply.github.com>'
+#
+#      - name: Create Pull Request
+#        uses: peter-evans/create-pull-request@v3
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          title: '[housekeeping] Automated PR to fix formatting errors'
+#          body: |
+#            Automated PR to fix formatting errors
+#          committer: GitHub <noreply@github.com>
+#          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+#          labels: housekeeping
+#          assignees: lyncolnms
+#          reviewers: lyncolnms
+#          branch: housekeeping/code-format
 
 #      - name: Run Dotnet Format Analyzer
 #        run: dotnet format analyzers --verbosity diag --verify-no-changes --report .
@@ -56,19 +68,3 @@ jobs:
 #          repo-token: ${{ secrets.GITHUB_TOKEN }}
 #          only-changed-files: false
 #          fail-fast: false
-
-      - name: List items in folder
-        run: |
-              ls
-
-#      - name: Add comments to pull request
-#        env:
-#          GH_TOKEN: ${{ github.token }}
-#        run: |
-#          cat format-report.json | jq -c '.[]' | while read -r line; do
-#            body=$(echo "$line" | jq -r '.message')
-#            path=$(echo "$line" | jq -r '.path')
-#            position=$(echo "$line" | jq -r '.position')
-#
-#            gh pr review ${{ github.event.pull_request.number }} --comment "$body" --path "$path" --position "$position"
-#          done
