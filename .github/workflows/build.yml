@@ -18,7 +18,6 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           only-changed-files: true
-          fix-analyzers-level: warning
 
       - name: List items in folder
         run: |
