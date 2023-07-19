@@ -12,13 +12,16 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Run dotnet format
-        id: format
-        uses: jfversluis/dotnet-format@v1.0.5
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          only-changed-files: false
-          fail-fast: false
+      - name: Run Dotnet Format Analyzer
+        run: dotnet format analyzers --report .
+
+#      - name: Run dotnet format
+#        id: format
+#        uses: jfversluis/dotnet-format@v1.0.5
+#        with:
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#          only-changed-files: false
+#          fail-fast: false
 
       - name: List items in folder
         run: |
@@ -29,8 +32,8 @@ jobs:
           reviewdog_version: latest
 
       - name: Run Reviewdog for custom analysis
-        if: steps.format.outputs.has-changes == 'true'
+#        if: steps.format.outputs.has-changes == 'true'
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          reviewdog -reporter=github-pr-check -level=error < format-report.json
+          reviewdog -reporter=github-pr-check -name="format-report"
