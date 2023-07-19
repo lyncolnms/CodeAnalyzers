@@ -15,6 +15,9 @@ namespace StyleCop
 
             var test = "ssss";
             Console.WriteLine(test);
+
+            var akakakak = 2;
+
         }
     }
 }
