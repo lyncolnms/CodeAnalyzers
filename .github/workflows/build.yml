@@ -39,7 +39,7 @@ jobs:
           labels: housekeeping
           assignees: lyncolnms
           reviewers: lyncolnms
-          branch: housekeeping/fix-codeformatting
+          branch: housekeeping/code-format
 
 #      - name: Run Dotnet Format Analyzer
 #        run: dotnet format analyzers --verbosity diag --verify-no-changes --report .
