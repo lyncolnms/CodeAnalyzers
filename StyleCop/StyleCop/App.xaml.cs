@@ -17,7 +17,7 @@ namespace StyleCop
             var test = "test";
             Console.WriteLine(test);
 
-            var g1 = new Guid();
+            var g1 = default(Guid);
             Guid g2 = new();
             var g3 = default(Guid);
             Guid g4 = default;

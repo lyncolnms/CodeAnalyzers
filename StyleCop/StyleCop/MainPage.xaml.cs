@@ -17,7 +17,6 @@ namespace StyleCop
             Console.WriteLine(test);
 
             var akakakak = 2;
-
         }
     }
 }
