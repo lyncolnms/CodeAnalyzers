@@ -28,7 +28,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $report = Get-Content -Raw -Path format-report.json
+          $report = '${{ steps.format.outputs.has-changes }}'
           $pythonScript = @"
               import json
               import os
