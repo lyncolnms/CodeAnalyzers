@@ -28,5 +28,7 @@ jobs:
               ls
 
       - name: Add comments to pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           cat format-report.json | gh pr review ${{ github.event.pull_request.number }} --comment
