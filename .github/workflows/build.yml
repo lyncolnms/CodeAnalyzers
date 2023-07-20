@@ -14,7 +14,7 @@ jobs:
       - run: dotnet restore
 
       - name: setup-msbuild
-        uses: microsoft/setup-msbuild@master
+        uses: microsoft/setup-msbuild@v1.1
 
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: msbuild -fl -flp:logfile=analyzer.log /v:diag
