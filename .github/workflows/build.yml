@@ -18,13 +18,6 @@ jobs:
       - name: Run Dotnet Format Analyzer
         run: dotnet format analyzers --verbosity diag --report .
 
-  create_comments:
-    needs: dotnet_format
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-  
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
