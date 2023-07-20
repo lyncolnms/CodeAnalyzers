@@ -18,11 +18,67 @@ jobs:
       - name: Run Dotnet Format Analyzer
         run: dotnet format analyzers --verbosity diag --report .
 
-      - name: Violation Comments Action
-        uses: tomasbjerre/violation-comments-action@master
+  create_comments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+  
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          parser: STYLECOP
-          regexp: '.*format-report\.json$'
+          python-version: '3.x'
+  
+      - name: Install dependencies
+        run: |
+          pip install requests
+  
+      - name: Create comments on PR
+        run: |
+          import json
+          import requests
+          
+          # Token de acesso pessoal do GitHub
+          github_access_token = "${{ secrets.GITHUB_TOKEN }}"
+          
+          # Caminho do arquivo format-report.json
+          json_file_path = "format-report.json"
+          
+          # Função para criar um comentário em um PR
+          def create_pr_comment(pr_number, file_path, line_number, body):
+              headers = {
+                  "Authorization": f"Bearer {github_access_token}",
+                  "Content-Type": "application/json"
+              }
+              data = {
+                  "body": body,
+                  "path": file_path,
+                  "position": line_number
+              }
+              url = f"https://api.github.com/repos/owner/repo/pulls/{pr_number}/comments"
+              response = requests.post(url, headers=headers, data=json.dumps(data))
+              return response.json()
+          
+          # Ler o arquivo format-report.json
+          with open(json_file_path, "r") as json_file:
+              data = json.load(json_file)
+          
+          # Loop através dos relatórios de violação e criar comentários no PR
+          for report in data:
+              file_path = report["FilePath"]
+              line_number = report["FileChanges"][0]["LineNumber"]
+              diagnostic_id = report["FileChanges"][0]["DiagnosticId"]
+              description = report["FileChanges"][0]["FormatDescription"]
+              comment_body = f"Warning {diagnostic_id}: {description}"
+              pr_number = "${{ github.event.pull_request.number }}" 
+          
+              create_pr_comment(pr_number, file_path, line_number, comment_body)
+
+#      - name: Violation Comments Action
+#        uses: tomasbjerre/violation-comments-action@master
+#        with:
+#          parser: STYLECOP
+#          regexp: '.*format-report\.json$'
 
 #      - name: Run dotnet format
 #        id: format
