@@ -33,6 +33,10 @@ jobs:
       - name: Execute Dotnet Format Analyzer
         run: dotnet format --check --dry-run > format-report2.json
 
+      - name: list 2
+        run: |
+          ls
+
       - name: Reviewdog Format Analysis
         run: |
             reviewdog -f=checkstyle -name="Dotnet Format Analyzer" -reporter=github-pr-check format-report2.json
