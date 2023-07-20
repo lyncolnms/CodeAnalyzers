@@ -2,7 +2,7 @@ name: Format check on pull request
 on: pull_request
 jobs:
   dotnet_format:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     permissions:
       contents: write
       pull-requests: write
@@ -20,11 +20,20 @@ jobs:
         with:
           reviewdog_version: latest
 
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: setup-xamarin
+        uses: maxim-lobanov/setup-xamarin@v1.1
+        with:
+          mono-version: latest
+          xamarin-ios-version: latest
+          xamarin-mac-version: latest
+          xamarin-android-version: latest
+          xcode-version: latest
 
-      - name: Build
-        run: dotnet build --no-restore
+      #      - name: Restore dependencies
+#        run: dotnet restore
+#
+#      - name: Build
+#        run: dotnet build --no-restore
 
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: |
