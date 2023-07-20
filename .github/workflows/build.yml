@@ -2,28 +2,29 @@ name: Format check on pull request
 on: pull_request
 jobs:
   dotnet_format:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
     steps:
-      - name: Install dotnet-format
-        run: dotnet tool install -g dotnet-format
-
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
         with:
-          ref: ${{ github.head_ref }}
+          dotnet-version: 6.0.x
+
+      - name: Install dotnet format
+        run: dotnet tool install -g dotnet-format
 
       - uses: reviewdog/action-setup@v1
         with:
           reviewdog_version: latest
 
-      - name: Install Xamarin Android SDK
-        run: dotnet workload install android
+      - name: Restore dependencies
+        run: dotnet restore
 
-      - name: Install Xamarin iOS SDK
-        run: dotnet workload install ios
+      - name: Build
+        run: dotnet build --no-restore
 
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: |
@@ -35,6 +36,11 @@ jobs:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           reviewdog -f=checkstyle -name="StyleCop Analyzers" -reporter=github-pr-check format-report.json
+
+#      - name: Checkout repo
+#        uses: actions/checkout@v3
+#        with:
+#          ref: ${{ github.head_ref }}
 
 #      - name: Execute Dotnet Format Analyzer
 #        run: dotnet format --check --dry-run > format-report2.json

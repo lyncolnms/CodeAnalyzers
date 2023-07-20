@@ -1,0 +1,75 @@
+name: Build Xamarin.Forms Applications
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'StyleCop/**/*'
+      - '.github/workflows/xamarin.yml'
+
+env:
+  FORMS_PROJECT_PATH: "StyleCop/StyleCop/StyleCop.csproj"
+  ANDROID_PROJECT_PATH: "StyleCop/StyleCop/StyleCop.Droid.csproj"
+  iOS_PROJECT_PATH: "StyleCop/StyleCop/StyleCop.iOS.csproj"
+
+jobs:
+  # Xamarin.Android project build
+  android-build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate version number
+        shell: pwsh
+        run: |
+          $buildDay = Get-Date -Format "yyyy.Mdd"
+          $ver = $buildDay + "." + $env:GITHUB_RUN_NUMBER + ".0"
+          echo "APP_VERSION=$ver" >> $GITHUB_ENV
+
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v1.1.3
+
+      - name: Setup Nuget.exe
+        uses: nuget/setup-nuget@v1.1.1
+
+      - name: NuGet Restore - Class Library Project
+        run: nuget restore ${{ env.FORMS_PROJECT_PATH }}
+
+      - name: NuGet Restore - Platform Project
+        run: nuget restore ${{ env.ANDROID_PROJECT_PATH }}
+
+      - name: Build Android Project
+        run: msbuild ${{ env.ANDROID_PROJECT_PATH }} /p:SolutionDir=StyleCop\StyleCop\ /p:Configuration=Debug /p:Platform=AnyCPU /verbosity:normal /t:Rebuild
+
+  # Xamarin.iOS project build
+  ios-build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate version number
+        shell: bash
+        run: |
+          buildDay=`date +%Y.%m%d`
+          echo $buildDay
+          runNum=${{ github.run_number }}
+          ver="${buildDay}.${runNum}.0"
+          echo $ver
+          echo "APP_VERSION=$ver" >> $GITHUB_ENV
+
+      - name: NuGet Restore - Class Library Project
+        run: nuget restore ${{ env.FORMS_PROJECT_PATH }}
+
+      - name: NuGet Restore - Platform Project
+        run: nuget restore ${{ env.iOS_PROJECT_PATH }}
+
+      - name: Build iOS Project
+        run: msbuild ${{ env.iOS_PROJECT_PATH }} /p:SolutionDir=StyleCop /p:Configuration=Debug /p:Platform=iPhoneSimulator /verbosity:normal /t:Rebuild
