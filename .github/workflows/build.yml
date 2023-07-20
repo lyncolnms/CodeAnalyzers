@@ -16,56 +16,17 @@ jobs:
       - name: Install dotnet format
         run: dotnet tool install -g dotnet-format
 
-      - uses: reviewdog/action-setup@v1
-        with:
-          reviewdog_version: latest
-
-#      - name: setup-xamarin
-#        uses: maxim-lobanov/setup-xamarin@v1.1
-#        with:
-#          mono-version: latest
-#          xamarin-ios-version: latest
-#          xamarin-mac-version: latest
-#          xamarin-android-version: latest
-#          xcode-version: latest
-
-#      - name: Restore dependencies
-#        run: dotnet restore
-#
-#      - name: Build
-#        run: dotnet build --no-restore
-
       - name: Execute StyleCop Analyzers and Dotnet Format
-        run: dotnet format > format-report.json
+        run: msbuild -fl -flp:logfile=analyzer.log;verbosity=diagnostic
 
-      - name: Reviewdog Format Analysis
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          reviewdog -f=checkstyle -name="StyleCop Analyzers" -reporter=github-pr-check format-report.json
+      - name: Violation Comments Action
+        uses: tomasbjerre/violation-comments-action@master
+        with:
+          parser: MSBULDLOG
+          regexp: '.*analyzer\\.log$'
 
-#      - name: Checkout repo
-#        uses: actions/checkout@v3
-#        with:
-#          ref: ${{ github.head_ref }}
-
-#      - name: Execute Dotnet Format Analyzer
-#        run: dotnet format --check --dry-run > format-report2.json
-#
-#      - name: Reviewdog Format Analysis
-#        env:
-#          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: |
-#          reviewdog -f=checkstyle -name="Dotnet Format Analyzer" -reporter=github-pr-check format-report2.json
-#
 #      - name: Run Dotnet Format Analyzer
 #        run: dotnet format analyzers --verbosity diag --report .
-#
-#      - name: Reviewdog Format Analysis
-#        env:
-#          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: |
-#          reviewdog -f=checkstyle -name="Dotnet Format Analyzer" -reporter=github-pr-check format-report.json
 
 #      - name: Set up Python
 #        uses: actions/setup-python@v4
