@@ -12,7 +12,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1
 
       - name: Execute StyleCop Analyzers and Dotnet Format
-        run: msbuild -fl -flp:logfile=analyzer.log;verbosity=diagnostic
+        run: msbuild -fl -flp:logfile=analyzer.log /v:diag
 
       - name: Violation Comments Action
         uses: tomasbjerre/violation-comments-action@master
