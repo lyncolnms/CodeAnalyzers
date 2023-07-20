@@ -8,8 +8,15 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
+
+      - name: setup-dotnet
+        uses: microsfot/setup-msbuild@master
+
       - name: setup-msbuild
-        uses: microsoft/setup-msbuild@v1
+        uses: microsoft/setup-msbuild@master
+
+      - name: Dotnet restore
+        uses: dotnet restore
 
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: msbuild -fl -flp:logfile=analyzer.log /v:diag
