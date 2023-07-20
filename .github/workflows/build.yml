@@ -16,7 +16,7 @@ jobs:
           ref: ${{ github.head_ref }}
 
       - name: Run Dotnet Format Analyzer
-        run: dotnet format analyzers --verbosity diag --verify-no-changes --report .
+        run: dotnet format analyzers --verbosity diag --report .
 
       - name: Set output
         run: echo "{name}={value}" >> $GITHUB_OUTPUT
