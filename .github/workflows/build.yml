@@ -66,7 +66,7 @@ jobs:
             comment_body = f\"Warning {diagnostic_id}: {description}\"
             pr_number = \"${{ github.event.pull_request.number }}\"
             
-          create_pr_comment(pr_number, file_path, line_number, comment_body)' > temp_script.py
+          create_pr_comment(pr_number, file_path, line_number, comment_body)" > temp_script.py
         shell: bash
 
       - name: Execute Python script
