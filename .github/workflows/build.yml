@@ -1,7 +1,7 @@
 name: Format check on pull request
 on: pull_request
 jobs:
-  dotnet-format:
+  dotnet_format:
     runs-on: windows-latest
     permissions:
       contents: write
@@ -11,25 +11,68 @@ jobs:
         run: dotnet tool install -g dotnet-format
 
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
       - name: Run Dotnet Format Analyzer
         run: dotnet format analyzers --verbosity diag --report .
 
-      - name: Violation Comments Action
-        uses: tomasbjerre/violation-comments-action@master
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          parser: STYLECOP
-          regexp: '.*format-report\.json$'
-          # Optional config below
-          keepOldComments: true # remove the old comments, or keep them
-          commentTemplate: '{{violation.message}}' # see https://github.com/tomasbjerre/violation-comments-lib
-          commentOnlyChangedContent: false # Comment only if violations in the changed part of PR
-          commentOnlyChangedFiles: false # Comment only on the files that are changed in PR
-          createSingleFileComments: true # Comment several comments, for each violation
-          createCommentWithAllSingleFileComments: false # Create on big comment with all violations
+          python-version: '3.x'
+  
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Create comments on PR
+        run: |
+          echo "
+          import json
+          import requests
+          
+          github_access_token = \"${{ secrets.GITHUB_TOKEN }}\"         
+          json_file_path = \"format-report.json\"
+
+          def create_pr_comment(pr_number, file_path, line_number, body):
+            headers = {
+              \"Authorization\": f\"Bearer {github_access_token}\",
+              \"Content-Type\": \"application/json\"
+            }
+            data = {
+              \"body\": body,
+              \"path\": file_path,
+              \"position\": line_number
+            }
+            url = f\"https://api.github.com/repos/owner/repo/pulls/{{pr_number}}/comments\"
+            response = requests.post(url, headers=headers, data=json.dumps(data))
+            return response.json()
+
+          with open(json_file_path, \"r\") as json_file:
+            data = json.load(json_file)
+
+          for report in data:
+            file_path = report[\"FilePath\"]
+            line_number = report[\"FileChanges\"][0][\"LineNumber\"]
+            diagnostic_id = report[\"FileChanges\"][0][\"DiagnosticId\"]
+            description = report[\"FileChanges\"][0][\"FormatDescription\"]
+            comment_body = f\"Warning {diagnostic_id}: {description}\"
+            pr_number = \"${{ github.event.pull_request.number }}\"
+            
+          create_pr_comment(pr_number, file_path, line_number, comment_body)" > temp_script.py
+        shell: bash
+
+      - name: Execute Python script
+        run: python temp_script.py
+
+
+#      - name: Violation Comments Action
+#        uses: tomasbjerre/violation-comments-action@master
+#        with:
+#          parser: STYLECOP
+#          regexp: '.*format-report\.json$'
 
 #      - name: Run dotnet format
 #        id: format
