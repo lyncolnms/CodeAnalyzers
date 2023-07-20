@@ -23,13 +23,6 @@ jobs:
         with:
           parser: STYLECOP
           regexp: '.*format-report\.json$'
-          # Optional config below
-          keepOldComments: true # remove the old comments, or keep them
-          commentTemplate: '{{violation.message}}' # see https://github.com/tomasbjerre/violation-comments-lib
-          commentOnlyChangedContent: false # Comment only if violations in the changed part of PR
-          commentOnlyChangedFiles: false # Comment only on the files that are changed in PR
-          createSingleFileComments: true # Comment several comments, for each violation
-          createCommentWithAllSingleFileComments: false # Create on big comment with all violations
 
 #      - name: Run dotnet format
 #        id: format
