@@ -29,7 +29,7 @@ jobs:
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: |
           dotnet build /p:ReportAnalyze=true /restore
-          dotnet format --check > format-report.json
+          dotnet format > format-report.json
 
       - name: Reviewdog Format Analysis
         env:
