@@ -10,6 +10,10 @@ jobs:
       - name: Install dotnet-format
         run: dotnet tool install -g dotnet-format
 
+      - name: Install Reviewdog
+        run: |
+            pip install reviewdog
+
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
