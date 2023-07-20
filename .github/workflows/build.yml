@@ -20,9 +20,6 @@ jobs:
           reviewdog_version: latest
 
       - name: Install Xamarin Android SDK
-        run: dotnet workload install maui
-
-      - name: Install Xamarin Android SDK
         run: dotnet workload install android
 
       - name: Install Xamarin iOS SDK
@@ -31,7 +28,7 @@ jobs:
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: |
           dotnet build /p:ReportAnalyze=true /restore
-          dotnet format --check --dry-run > format-report.json
+          dotnet format --check > format-report.json
 
       - name: Reviewdog Format Analysis
         env:
