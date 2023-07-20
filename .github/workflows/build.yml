@@ -1,5 +1,9 @@
 name: Format check on pull request
 on: pull_request
+env:
+  FORMS_PROJECT_PATH: "StyleCop/StyleCop/StyleCop.csproj"
+  ANDROID_PROJECT_PATH: "StyleCop/StyleCop.Droid.csproj"
+  iOS_PROJECT_PATH: "StyleCop/StyleCop.iOS.csproj"
 jobs:
   dotnet_format:
     runs-on: windows-latest
@@ -13,12 +17,24 @@ jobs:
           dotnet-version: '7.0.x'
       - run: dotnet restore StyleCop.sln
 
+      - name: Setup Nuget.exe
+        uses: nuget/setup-nuget@v1.1.1
+
+      - name: NuGet Restore - Forms Class Library Project
+        run: nuget restore ${{ env.FORMS_PROJECT_PATH }}
+
+      - name: NuGet Restore - Android Platform Project
+        run: nuget restore ${{ env.ANDROID_PROJECT_PATH }}
+
+      - name: NuGet Restore - iOS Platform Project
+        run: nuget restore ${{ env.iOS_PROJECT_PATH }}
+
       - name: setup-msbuild
         uses: microsoft/setup-msbuild@v1.1
 
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: msbuild StyleCop.sln -fl -flp:logfile=analyzer.log /v:diag
-
+  
       - name: Violation Comments Action
         uses: tomasbjerre/violation-comments-action@master
         with:
