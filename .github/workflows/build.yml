@@ -33,7 +33,9 @@ jobs:
           import json
           import requests
           
-          github_access_token = \"${{ secrets.GITHUB_TOKEN }}\"         
+          github_access_token = \"${{ secrets.GITHUB_TOKEN }}\"
+          github_owner = \"${{ github.GITHUB_REPOSITORY_OWNER }}\"
+          github_repo = \"${{ github.GITHUB_REPOSITORY }}\"
           json_file_path = \"format-report.json\"
 
           def create_pr_comment(pr_number, file_path, line_number, body):
@@ -46,7 +48,7 @@ jobs:
               \"path\": file_path,
               \"position\": line_number
             }
-            url = f\"https://api.github.com/repos/lyncolnms/codeanalyzers/pulls/{{pr_number}}/comments\"
+            url = f\"https://api.github.com/repos/{github_repo}/pulls/{{pr_number}}/comments\"
             response = requests.post(url, headers=headers, data=json.dumps(data))
             return response.json()
 
