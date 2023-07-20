@@ -10,10 +10,6 @@ jobs:
       - name: Install dotnet-format
         run: dotnet tool install -g dotnet-format
 
-      - name: Install Reviewdog
-        run: |
-            pip install reviewdog
-
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
@@ -25,6 +21,14 @@ jobs:
 
       - name: Run Dotnet Format Analyzer
         run: dotnet format analyzers --verbosity diag --report .
+
+      - name: list
+        run: |
+          ls
+
+      - name: Install Reviewdog
+        run: |
+          scoop install reviewdog
 
       - name: Reviewdog Format Analysis
         run: |
