@@ -8,10 +8,10 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: '7.0.x'
+      - run: dotnet build
 
       - name: Install dotnet format
         run: dotnet tool install -g dotnet-format
@@ -36,9 +36,7 @@ jobs:
 #        run: dotnet build --no-restore
 
       - name: Execute StyleCop Analyzers and Dotnet Format
-        run: |
-          dotnet build /p:ReportAnalyze=true /restore
-          dotnet format > format-report.json
+        run: dotnet format > format-report.json
 
       - name: Reviewdog Format Analysis
         env:
