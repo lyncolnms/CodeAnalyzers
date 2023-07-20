@@ -2,7 +2,7 @@ name: Format check on pull request
 on: pull_request
 jobs:
   dotnet_format:
-    runs-on: macos-latest
+    runs-on: windows-latest
     permissions:
       contents: write
       pull-requests: write
