@@ -26,7 +26,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $reportContent = Get-Content -Raw -Path format-report.json
-          $commentCommand = "gh pr review ${{ github.event.pull_request.number }} --body '$reportContent'"
+          $commentCommand = "gh pr review ${{ github.event.pull_request.number }} --body `"$reportContent`""
           Invoke-Expression -Command $commentCommand
 
 
