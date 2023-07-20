@@ -42,7 +42,6 @@ jobs:
           def create_pr_comment(pr_number, file_path, line_number, body):
             headers = {
               \"Authorization\": f\"Bearer {github_access_token}\",
-              \"Accept\": f\"application/vnd.github+json\"
               \"Content-Type\": \"application/json\"
             }
             data = {
