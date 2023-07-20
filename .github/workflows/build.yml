@@ -19,10 +19,13 @@ jobs:
         with:
           reviewdog_version: latest
 
-      - name: Install Xamarin SDK
+      - name: Install Xamarin Android SDK
         run: |
-          choco install xamarin-android
-          choco install xamarin-ios
+            dotnet workload install Xamarin.Android
+
+      - name: Install Xamarin iOS SDK
+        run: |
+          dotnet workload install Xamarin.iOS
 
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: |
