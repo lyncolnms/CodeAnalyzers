@@ -8,13 +8,8 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '7.0.x'
-      - run: dotnet build
-
-      - name: Install dotnet format
-        run: dotnet tool install -g dotnet-format
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1
 
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: msbuild -fl -flp:logfile=analyzer.log;verbosity=diagnostic
@@ -24,6 +19,14 @@ jobs:
         with:
           parser: MSBULDLOG
           regexp: '.*analyzer\\.log$'
+
+#      - uses: actions/setup-dotnet@v3
+#        with:
+#          dotnet-version: '7.0.x'
+#      - run: dotnet build
+#
+#      - name: Install dotnet format
+#        run: dotnet tool install -g dotnet-format
 
 #      - name: Run Dotnet Format Analyzer
 #        run: dotnet format analyzers --verbosity diag --report .
