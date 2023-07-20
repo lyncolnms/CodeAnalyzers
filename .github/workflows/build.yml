@@ -2,8 +2,8 @@ name: Format check on pull request
 on: pull_request
 env:
   FORMS_PROJECT_PATH: "StyleCop/StyleCop/StyleCop.csproj"
-  ANDROID_PROJECT_PATH: "StyleCop/StyleCop.Droid.csproj"
-  iOS_PROJECT_PATH: "StyleCop/StyleCop.iOS.csproj"
+  ANDROID_PROJECT_PATH: "StyleCop/StyleCop.Droid/StyleCop.Droid.csproj"
+  iOS_PROJECT_PATH: "StyleCop/StyleCop.iOS/StyleCop.iOS.csproj"
 jobs:
   dotnet_format:
     runs-on: windows-latest
@@ -34,7 +34,7 @@ jobs:
 
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: msbuild StyleCop.sln -fl -flp:logfile=analyzer.log /v:diag
-  
+
       - name: Violation Comments Action
         uses: tomasbjerre/violation-comments-action@master
         with:

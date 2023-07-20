@@ -11,8 +11,8 @@ on:
 
 env:
   FORMS_PROJECT_PATH: "StyleCop/StyleCop/StyleCop.csproj"
-  ANDROID_PROJECT_PATH: "StyleCop/StyleCop.Droid.csproj"
-  iOS_PROJECT_PATH: "StyleCop/StyleCop.iOS.csproj"
+  ANDROID_PROJECT_PATH: "StyleCop/StyleCop.Droid/StyleCop.Droid.csproj"
+  iOS_PROJECT_PATH: "StyleCop/StyleCop.iOS/StyleCop.iOS.csproj"
 
 jobs:
   # Xamarin.Android project build
