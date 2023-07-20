@@ -29,7 +29,7 @@ jobs:
           maxNumberOfViolations: 99 # Will only post this many comments
           severity: WARN # INFO, WARN or ERROR
           commentOnlyChangedContent: false # Comment only if violations in the changed part of PR
-          commentOnlyChangedFiles: false # Comment only on the files that are changed in PR
+          commentOnlyChangedFiles: true # Comment only on the files that are changed in PR
           createSingleFileComments: true # Comment several comments, for each violation
           createCommentWithAllSingleFileComments: false # Create on big comment with all violations
 
