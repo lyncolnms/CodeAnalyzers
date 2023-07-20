@@ -14,7 +14,6 @@
         <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
         <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
         <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-        <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
         <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
         <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     </PropertyGroup>
@@ -39,36 +38,36 @@
         <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="Mono.Android"/>
-        <Reference Include="System"/>
-        <Reference Include="System.Core"/>
-        <Reference Include="System.Xml.Linq"/>
-        <Reference Include="System.Xml"/>
+        <Reference Include="Mono.Android" />
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Xml.Linq" />
+        <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012"/>
+        <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="MainActivity.cs"/>
-        <Compile Include="Resources\Resource.Designer.cs"/>
-        <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="MainActivity.cs" />
+        <Compile Include="Resources\Resource.Designer.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="Resources\AboutResources.txt"/>
-        <None Include="Assets\AboutAssets.txt"/>
-        <None Include="Properties\AndroidManifest.xml"/>
+        <None Include="Resources\AboutResources.txt" />
+        <None Include="Assets\AboutAssets.txt" />
+        <None Include="Properties\AndroidManifest.xml" />
     </ItemGroup>
     <ItemGroup>
-        <AndroidResource Include="Resources\layout\Tabbar.axml"/>
-        <AndroidResource Include="Resources\layout\Toolbar.axml"/>
-        <AndroidResource Include="Resources\values\styles.xml"/>
-        <AndroidResource Include="Resources\values\colors.xml"/>
+        <AndroidResource Include="Resources\layout\Tabbar.axml" />
+        <AndroidResource Include="Resources\layout\Toolbar.axml" />
+        <AndroidResource Include="Resources\values\styles.xml" />
+        <AndroidResource Include="Resources\values\colors.xml" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\StyleCop\StyleCop.csproj">
-            <Project>{F292D964-21C9-40C6-9E61-B8B68D0CBC37}</Project>
+            <Project>{2FB899F1-CC92-4F05-BA85-8D5310369D17}</Project>
             <Name>StyleCop</Name>
         </ProjectReference>
     </ItemGroup>
-    <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets"/>
+    <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

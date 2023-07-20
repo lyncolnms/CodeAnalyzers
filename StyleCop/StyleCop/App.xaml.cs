@@ -4,37 +4,31 @@ using Xamarin.Forms.Xaml;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 
-namespace StyleCop
-{
-    public partial class App : Application
-    {
-        public App()
-        {
+namespace StyleCop {
+    public partial class App : Application {
+        public App() {
             InitializeComponent();
 
             MainPage = new MainPage();
 
-            var test = "test";
+            string test = "test";
             Console.WriteLine(test);
 
             var g1 = new Guid();
-            Guid g2 = new();
+            Guid g2 = new ();
             var g3 = default(Guid);
             Guid g4 = default;
         }
 
-        protected override void OnStart()
-        {
+        protected override void OnStart() {
             // Handle when your app starts
         }
 
-        protected override void OnSleep()
-        {
+        protected override void OnSleep() {
             // Handle when your app sleeps
         }
 
-        protected override void OnResume()
-        {
+        protected override void OnResume() {
             // Handle when your app resumes
         }
     }
