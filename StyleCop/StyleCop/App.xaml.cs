@@ -16,12 +16,12 @@ namespace StyleCop {
 
             var g1 = new Guid();
             Guid g2 = new ();
-            var g3 = default(Guid);
-            Guid g4 = default;
         }
 
         protected override void OnStart() {
             // Handle when your app starts
+
+            var test = 2;
         }
 
         protected override void OnSleep() {
