@@ -20,12 +20,10 @@ jobs:
           reviewdog_version: latest
 
       - name: Install Xamarin Android SDK
-        run: |
-            dotnet workload install Xamarin.Android
+        run: dotnet tool install -g Xamarin.Android
 
       - name: Install Xamarin iOS SDK
-        run: |
-          dotnet workload install Xamarin.iOS
+        run: dotnet tool install -g Xamarin.iOS
 
       - name: Execute StyleCop Analyzers and Dotnet Format
         run: |
