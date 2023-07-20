@@ -26,10 +26,6 @@ jobs:
         run: |
           ls
 
-      - name: Install Reviewdog
-        run: |
-          scoop install reviewdog
-
       - name: Reviewdog Format Analysis
         run: |
           reviewdog -f=checkstyle -name="Dotnet Format Analyzer" -reporter=github-pr-check format-report.json
