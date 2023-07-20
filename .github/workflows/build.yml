@@ -11,13 +11,13 @@ jobs:
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.0.x'
-      - run: dotnet restore StyleCop/StyleCop.sln
+      - run: dotnet restore StyleCop.sln
 
       - name: setup-msbuild
         uses: microsoft/setup-msbuild@v1.1
 
       - name: Execute StyleCop Analyzers and Dotnet Format
-        run: msbuild StyleCop/StyleCop.sln -fl -flp:logfile=analyzer.log /v:diag
+        run: msbuild StyleCop.sln -fl -flp:logfile=analyzer.log /v:diag
 
       - name: Violation Comments Action
         uses: tomasbjerre/violation-comments-action@master
