@@ -3,11 +3,20 @@
 
   "settings": {
     "layoutRules": {
-      "newlineAtEndOfFile": "require"
+      "newlineAtEndOfFile": "omit",
+      "allowConsecutiveUsings": false
     },
     "orderingRules": {
-      "systemUsingDirectivesFirst": true,
-      "usingDirectivesPlacement": "outsideNamespace"
+      "systemUsingDirectivesFirst": false,
+      "usingDirectivesPlacement": "outsideNamespace",
+      "elementOrder": [
+        "kind",
+        "constant",
+        "accessibility",
+        "static",
+        "readonly"
+      ],
+      "blankLinesBetweenUsingGroups": "require"
     }
   }
 }
