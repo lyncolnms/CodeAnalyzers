@@ -20,16 +20,16 @@ jobs:
         with:
           reviewdog_version: latest
 
-      - name: setup-xamarin
-        uses: maxim-lobanov/setup-xamarin@v1.1
-        with:
-          mono-version: latest
-          xamarin-ios-version: latest
-          xamarin-mac-version: latest
-          xamarin-android-version: latest
-          xcode-version: latest
+#      - name: setup-xamarin
+#        uses: maxim-lobanov/setup-xamarin@v1.1
+#        with:
+#          mono-version: latest
+#          xamarin-ios-version: latest
+#          xamarin-mac-version: latest
+#          xamarin-android-version: latest
+#          xcode-version: latest
 
-      #      - name: Restore dependencies
+#      - name: Restore dependencies
 #        run: dotnet restore
 #
 #      - name: Build
