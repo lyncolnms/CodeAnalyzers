@@ -18,18 +18,18 @@ jobs:
       - name: Run Dotnet Format Analyzer
         run: dotnet format analyzers --verbosity diag --report .
 
-      - name: Set output
-        run: echo "{name}={value}" >> $GITHUB_OUTPUT
-
-      - name: Add comments to pull request
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          $reportContent = Get-Content -Raw -Path format-report.json
-          $commentCommand = "gh pr review ${{ github.event.pull_request.number }} --body `"$reportContent`""
-          Invoke-Expression -Command $commentCommand
-
-
+      - name: Violation Comments Action
+        uses: tomasbjerre/violation-comments-action@master
+        with:
+          parser: STYLECOP
+          regexp: '.*format-report\.json$'
+          # Optional config below
+          keepOldComments: true # remove the old comments, or keep them
+          commentTemplate: '{{violation.message}}' # see https://github.com/tomasbjerre/violation-comments-lib
+          commentOnlyChangedContent: false # Comment only if violations in the changed part of PR
+          commentOnlyChangedFiles: false # Comment only on the files that are changed in PR
+          createSingleFileComments: true # Comment several comments, for each violation
+          createCommentWithAllSingleFileComments: false # Create on big comment with all violations
 
 #      - name: Run dotnet format
 #        id: format
