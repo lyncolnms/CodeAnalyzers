@@ -15,32 +15,41 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: |
-            3.1.x
-            7.0.x
+          dotnet-version: 7.0.x
       - run: dotnet restore StyleCop.sln
 
-      - name: Run Forms NuGet restore
-        run: dotnet restore ${{ env.FORMS_PROJECT_PATH }}
+      - name: Setup Nuget.exe
+        uses: nuget/setup-nuget@v1.1.1
 
-      - name: Run Android NuGet restore
-        run: dotnet restore ${{ env.ANDROID_PROJECT_PATH }}
-
-      - name: Run iOS NuGet restore
-        run: dotnet restore ${{ env.iOS_PROJECT_PATH }}
-
-      # Run code analysis for all projects/solutions, such that code analysis violations break the build.
-      - name: Run .NET Code Analysis
-        uses: dotnet/code-analysis@main
-        id: code-analysis
+      - uses: actions/cache@v3
+        id: cache
         with:
-          build-breaking: false
+          path: ${{ github.workspace }}/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: NuGet Restore - Forms Class Library Project
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: nuget restore ${{ env.FORMS_PROJECT_PATH }}
+
+      - name: NuGet Restore - Android Platform Project
+        run: nuget restore ${{ env.ANDROID_PROJECT_PATH }}
+
+      - name: NuGet Restore - iOS Platform Project
+        run: nuget restore ${{ env.iOS_PROJECT_PATH }}
+
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Execute StyleCop Analyzers and Dotnet Format
+        run: msbuild StyleCop.sln -fl -flp:logfile=analyzer.log /v:diag
 
       - name: Violation Comments Action
         uses: tomasbjerre/violation-comments-action@master
         with:
-          parser: SARIF
-          regexp: '.*\\.sarif$'
+          parser: MSBULDLOG
+          regexp: '.*analyzer\\.log$'
           keepOldComments: true # remove the old comments, or keep them
           commentTemplate: '{{violation.message}}' # see https://github.com/tomasbjerre/violation-comments-lib
           maxNumberOfViolations: 99 # Will only post this many comments
@@ -49,48 +58,6 @@ jobs:
           commentOnlyChangedFiles: true # Comment only on the files that are changed in PR
           createSingleFileComments: true # Comment several comments, for each violation
           createCommentWithAllSingleFileComments: false # Create on big comment with all violations
-
-#      - name: Setup Nuget.exe
-#        uses: nuget/setup-nuget@v1.1.1
-
-#      - uses: actions/cache@v3
-#        id: cache
-#        with:
-#          path: ${{ github.workspace }}/.nuget/packages
-#          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-#          restore-keys: |
-#            ${{ runner.os }}-nuget-
-
-#      - name: NuGet Restore - Forms Class Library Project
-#        if: steps.cache.outputs.cache-hit != 'true'
-#        run: nuget restore ${{ env.FORMS_PROJECT_PATH }}
-#
-#      - name: NuGet Restore - Android Platform Project
-#        run: nuget restore ${{ env.ANDROID_PROJECT_PATH }}
-#
-#      - name: NuGet Restore - iOS Platform Project
-#        run: nuget restore ${{ env.iOS_PROJECT_PATH }}
-
-#      - name: setup-msbuild
-#        uses: microsoft/setup-msbuild@v1.1
-#
-#      - name: Execute StyleCop Analyzers and Dotnet Format
-#        run: msbuild StyleCop.sln -fl -flp:logfile=analyzer.log /v:diag
-
-#      - name: Violation Comments Action
-#        uses: tomasbjerre/violation-comments-action@master
-#        with:
-#          parser: MSBULDLOG
-#          regexp: '.*analyzer\\.log$'
-#          keepOldComments: true # remove the old comments, or keep them
-#          commentTemplate: '{{violation.message}}' # see https://github.com/tomasbjerre/violation-comments-lib
-#          maxNumberOfViolations: 99 # Will only post this many comments
-#          severity: WARN # INFO, WARN or ERROR
-#          commentOnlyChangedContent: true # Comment only if violations in the changed part of PR
-#          commentOnlyChangedFiles: true # Comment only on the files that are changed in PR
-#          createSingleFileComments: true # Comment several comments, for each violation
-#          createCommentWithAllSingleFileComments: false # Create on big comment with all violations
-
 
 #      - name: Run dotnet format
 #        id: format
