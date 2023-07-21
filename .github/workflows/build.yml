@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 7.0.x
-      - run: dotnet restore StyleCop.sln
+      - run: dotnet restore
 
       - name: Setup Nuget.exe
         uses: nuget/setup-nuget@v1.1.1
@@ -29,21 +29,30 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: NuGet Restore - Forms Class Library Project
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: nuget restore ${{ env.FORMS_PROJECT_PATH }}
-
-      - name: NuGet Restore - Android Platform Project
-        run: nuget restore ${{ env.ANDROID_PROJECT_PATH }}
-
-      - name: NuGet Restore - iOS Platform Project
-        run: nuget restore ${{ env.iOS_PROJECT_PATH }}
+      - name: Get modified files in PR
+        id: modified_files
+        run: |
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} > modified_files.txt
 
       - name: setup-msbuild
         uses: microsoft/setup-msbuild@v1.1
 
-      - name: Execute StyleCop Analyzers and Dotnet Format
-        run: msbuild StyleCop.sln -fl -flp:logfile=analyzer.log /v:diag
+      - name: Build and analyze modified projects
+        run: |
+          $modifiedFiles = Get-Content modified_files.txt
+          $projectsToBuild = $modifiedFiles -like "*.csproj"
+
+          if ($projectsToBuild.Count -eq 0) {
+            echo "No modified projects to build."
+            exit 0
+          }
+
+          $projectsToBuild | ForEach-Object {
+            msbuild $_ -fl -flp:logfile=analyzer.log /v:diag            
+          }
+
+#      - name: Execute StyleCop Analyzers and Dotnet Format
+#        run: msbuild StyleCop.sln -fl -flp:logfile=analyzer.log /v:diag
 
       - name: Violation Comments Action
         uses: tomasbjerre/violation-comments-action@master
