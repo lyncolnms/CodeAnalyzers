@@ -4,6 +4,7 @@ env:
   FORMS_PROJECT_PATH: "StyleCop/StyleCop/StyleCop.csproj"
   ANDROID_PROJECT_PATH: "StyleCop/StyleCop.Droid/StyleCop.Droid.csproj"
   iOS_PROJECT_PATH: "StyleCop/StyleCop.iOS/StyleCop.iOS.csproj"
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 jobs:
   dotnet_format:
     runs-on: windows-latest
@@ -20,13 +21,24 @@ jobs:
       - name: Setup Nuget.exe
         uses: nuget/setup-nuget@v1.1.1
 
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: ${{ github.workspace }}/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: NuGet Restore - Forms Class Library Project
+        if: steps.cache.outputs.cache-hit != 'true'
         run: nuget restore ${{ env.FORMS_PROJECT_PATH }}
 
       - name: NuGet Restore - Android Platform Project
+        if: steps.cache.outputs.cache-hit != 'true'
         run: nuget restore ${{ env.ANDROID_PROJECT_PATH }}
 
       - name: NuGet Restore - iOS Platform Project
+        if: steps.cache.outputs.cache-hit != 'true'
         run: nuget restore ${{ env.iOS_PROJECT_PATH }}
 
       - name: setup-msbuild
