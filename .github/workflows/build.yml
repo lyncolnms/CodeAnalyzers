@@ -7,7 +7,7 @@ env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 jobs:
   dotnet_format:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
