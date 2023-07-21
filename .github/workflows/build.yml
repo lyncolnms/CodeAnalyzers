@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |
-            3.1.2
+            3.1.x
             7.0.x
       - run: dotnet restore StyleCop.sln
 
@@ -28,27 +28,6 @@ jobs:
 
       - name: Run iOS NuGet restore
         run: dotnet restore ${{ env.iOS_PROJECT_PATH }}
-
-#      - name: Setup Nuget.exe
-#        uses: nuget/setup-nuget@v1.1.1
-
-#      - uses: actions/cache@v3
-#        id: cache
-#        with:
-#          path: ${{ github.workspace }}/.nuget/packages
-#          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-#          restore-keys: |
-#            ${{ runner.os }}-nuget-
-
-#      - name: NuGet Restore - Forms Class Library Project
-#        if: steps.cache.outputs.cache-hit != 'true'
-#        run: nuget restore ${{ env.FORMS_PROJECT_PATH }}
-#
-#      - name: NuGet Restore - Android Platform Project
-#        run: nuget restore ${{ env.ANDROID_PROJECT_PATH }}
-#
-#      - name: NuGet Restore - iOS Platform Project
-#        run: nuget restore ${{ env.iOS_PROJECT_PATH }}
 
       # Run code analysis for all projects/solutions, such that code analysis violations break the build.
       - name: Run .NET Code Analysis
@@ -70,6 +49,27 @@ jobs:
           commentOnlyChangedFiles: true # Comment only on the files that are changed in PR
           createSingleFileComments: true # Comment several comments, for each violation
           createCommentWithAllSingleFileComments: false # Create on big comment with all violations
+
+#      - name: Setup Nuget.exe
+#        uses: nuget/setup-nuget@v1.1.1
+
+#      - uses: actions/cache@v3
+#        id: cache
+#        with:
+#          path: ${{ github.workspace }}/.nuget/packages
+#          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+#          restore-keys: |
+#            ${{ runner.os }}-nuget-
+
+#      - name: NuGet Restore - Forms Class Library Project
+#        if: steps.cache.outputs.cache-hit != 'true'
+#        run: nuget restore ${{ env.FORMS_PROJECT_PATH }}
+#
+#      - name: NuGet Restore - Android Platform Project
+#        run: nuget restore ${{ env.ANDROID_PROJECT_PATH }}
+#
+#      - name: NuGet Restore - iOS Platform Project
+#        run: nuget restore ${{ env.iOS_PROJECT_PATH }}
 
 #      - name: setup-msbuild
 #        uses: microsoft/setup-msbuild@v1.1
