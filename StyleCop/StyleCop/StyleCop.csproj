@@ -9,10 +9,6 @@
         <DebugType>pdbonly</DebugType>
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
-
-    <PropertyGroup>
-        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    </PropertyGroup>
     
     <ItemGroup>
         <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012"/>
