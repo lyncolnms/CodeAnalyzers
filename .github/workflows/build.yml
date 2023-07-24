@@ -17,56 +17,15 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - run: dotnet restore
-
-      - name: Setup Nuget.exe
-        uses: nuget/setup-nuget@v1.1.1
-
-      - uses: actions/cache@v3
-        id: cache
+      
+      - uses: reviewdog/action-setup@v1
         with:
-          path: ${{ github.workspace }}/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Get modified files in PR
-        id: modified_files
+          reviewdog_version: latest
+      - name: Run reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} > modified_files.txt
-
-      - name: setup-msbuild
-        uses: microsoft/setup-msbuild@v1.1
-
-      - name: Build and analyze modified projects
-        run: |
-          $modifiedFiles = Get-Content modified_files.txt
-          $projectsToBuild = $modifiedFiles -like "*.csproj"
-
-          if ($projectsToBuild.Count -eq 0) {
-            echo "No modified projects to build."
-            exit 0
-          }
-
-          $projectsToBuild | ForEach-Object {
-            msbuild $_ -fl -flp:logfile=analyzer.log /v:diag            
-          }
-
-#      - name: Execute StyleCop Analyzers and Dotnet Format
-#        run: msbuild StyleCop.sln -fl -flp:logfile=analyzer.log /v:diag
-
-      - name: Violation Comments Action
-        uses: tomasbjerre/violation-comments-action@master
-        with:
-          parser: MSBULDLOG
-          regexp: '.*analyzer\\.log$'
-          keepOldComments: true # remove the old comments, or keep them
-          commentTemplate: '{{violation.message}}' # see https://github.com/tomasbjerre/violation-comments-lib
-          maxNumberOfViolations: 99 # Will only post this many comments
-          severity: WARN # INFO, WARN or ERROR
-          commentOnlyChangedContent: true # Comment only if violations in the changed part of PR
-          commentOnlyChangedFiles: true # Comment only on the files that are changed in PR
-          createSingleFileComments: true # Comment several comments, for each violation
-          createCommentWithAllSingleFileComments: false # Create on big comment with all violations
+            reviewdog -f=dotnet -reporter=github-pr-review -level=warning -diff="git dif HEAD"
 
 #      - name: Run dotnet format
 #        id: format
