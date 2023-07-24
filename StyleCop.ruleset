@@ -137,7 +137,7 @@
     </Rules>
 
     <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.LayoutRules">
-        <Rule Id="SA1500"  Action="Warning" />          <!-- Braces for multi-line statements should not share line -->
+        <Rule Id="SA1500"  Action="None" />          <!-- Braces for multi-line statements should not share line -->
         <Rule Id="SA1501"  Action="Warning" />          <!-- Statement should not be on a single line -->
         <Rule Id="SA1502"  Action="Warning" />          <!-- Element should not be on a single line -->
         <Rule Id="SA1503"  Action="Warning" />          <!-- Braces should not be omitted -->
