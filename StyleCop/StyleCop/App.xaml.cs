@@ -12,10 +12,7 @@ namespace StyleCop {
             MainPage = new MainPage();
 
             string test = "test";
-            Console.WriteLine(test);
-
-            var g1 = new Guid();
-            Guid g2 = new ();
+            var test=1234;
         }
 
         protected override void OnStart() {
