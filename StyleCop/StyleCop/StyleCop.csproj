@@ -11,11 +11,6 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118"/>
-        <GlobalAnalyzerConfigFiles Include="Settings.StyleCop.xml"/>
+        <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     </ItemGroup>
 </Project>

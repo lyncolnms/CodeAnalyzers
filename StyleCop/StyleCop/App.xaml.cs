@@ -11,7 +11,7 @@ namespace StyleCop {
 
             MainPage = new MainPage();
 
-            string test = "test";
+            string test2 = "test";
             var test=1234;
         }
 

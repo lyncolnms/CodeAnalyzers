@@ -63,11 +63,6 @@
         <AndroidResource Include="Resources\values\styles.xml" />
         <AndroidResource Include="Resources\values\colors.xml" />
     </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\StyleCop\StyleCop.csproj">
-            <Project>{2FB899F1-CC92-4F05-BA85-8D5310369D17}</Project>
-            <Name>StyleCop</Name>
-        </ProjectReference>
-    </ItemGroup>
+    
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
