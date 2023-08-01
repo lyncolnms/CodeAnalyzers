@@ -25,8 +25,7 @@ jobs:
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            dotnet build -clp:NoSummary -p:GenerateFullPaths=true --no-incremental --nologo -v q \
-            | reviewdog -f=dotnet -name=dotnet -reporter=github-pr-review -diff="git diff ${GITHUB_BASE_REF}...${GITHUB_HEAD_REF}"
+            reviewdog -f=dotnet -name=dotnet -reporter=github-pr-review -diff="git diff ${GITHUB_BASE_REF}...${GITHUB_HEAD_REF}"
 
 #      - name: Run dotnet format
 #        id: format
