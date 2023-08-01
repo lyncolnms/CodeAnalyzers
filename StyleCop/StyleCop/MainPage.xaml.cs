@@ -18,6 +18,7 @@ namespace StyleCop
 
             var akakakak = 2;
             var testttt = 3;
+            var dada = 3;
 
         }
     }
