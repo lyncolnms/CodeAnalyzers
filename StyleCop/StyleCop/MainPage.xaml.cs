@@ -13,10 +13,12 @@ namespace StyleCop
         {
             InitializeComponent();
 
-            var test = "ssss";
+            var test = "ss";
             Console.WriteLine(test);
 
             var akakakak = 2;
+            var testttt = 3;
+            var dada = 3;
 
         }
     }
