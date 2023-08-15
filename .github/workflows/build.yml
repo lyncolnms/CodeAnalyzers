@@ -3,6 +3,7 @@ on:
     pull_request:
       types: 
         - ready_for_review
+        - synchronize
 env:
   FORMS_PROJECT_PATH: "StyleCop/StyleCop/StyleCop.csproj"
   ANDROID_PROJECT_PATH: "StyleCop/StyleCop.Droid/StyleCop.Droid.csproj"
