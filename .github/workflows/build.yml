@@ -1,5 +1,8 @@
 name: Format check on pull request
-on: pull_request
+on: 
+    pull_request:
+      types: 
+        - ready_for_review
 env:
   FORMS_PROJECT_PATH: "StyleCop/StyleCop/StyleCop.csproj"
   ANDROID_PROJECT_PATH: "StyleCop/StyleCop.Droid/StyleCop.Droid.csproj"
